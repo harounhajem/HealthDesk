@@ -61,6 +61,7 @@ void loop()
 
 void MoveUp()
 {
+
 	if (upAction_isActive) {
 		analogWrite(BUTTON_UP, 255);
 	}
