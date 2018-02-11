@@ -1,14 +1,16 @@
+#include "Communication.h"
 #define BUTTON_UP 5
 #define BUTTON_DOWN 6
 
+CommunicationClass communication;
+
 char msg;
 String recivedMessage;
-boolean upAction_isActive = true,
-downAction_isActive = true;
 
 String COMMAND_UP = "UP";
 String COMMAND_DOWN = "DN";
 
+unsigned long timer_ResetComndDelay = 0;
 
 
 void setup()
@@ -23,62 +25,47 @@ void loop()
 
 
 
-	// Recive command
-	if (Serial.available() > 0)
-	{
-		Serial.print("MSG: ");
-		recivedMessage = "";
-		delay(2);
-
-		// decypher
-		while (Serial.available() > 0)
-		{
-			msg = Serial.read();
-			Serial.print(msg);
-			recivedMessage += msg;
-		}
-		Serial.println(recivedMessage);
-
-	}
+	// Recive message
+	recivedMessage = communication.ReadBytesUntil();
 
 
-	// Execute command
+	// Execute Command
 	if (recivedMessage == COMMAND_UP)
 	{
-		Serial.println("UP");
+		Serial.println("EXEC: UP");
 		MoveUp();
+		timer_ResetComndDelay = millis();
 	}
 	else if (recivedMessage == COMMAND_DOWN)
 	{
-		Serial.println("DOWN");
+		Serial.println("EXEC: DOWN");
 		MoveDown();
+		timer_ResetComndDelay = millis();
+
 	}
+	else if (recivedMessage == "") {
+		Reset();
+	}
+
+	// Execute Timer
 
 
 	recivedMessage = "";
 }
 
+void Reset() {
+	if (millis() - timer_ResetComndDelay > 80UL) {
+		digitalWrite(BUTTON_UP, LOW);
+		digitalWrite(BUTTON_DOWN, LOW);
+	}
+}
 
 void MoveUp()
 {
-
-	if (upAction_isActive) {
-		analogWrite(BUTTON_UP, 255);
-	}
-	else {
-		analogWrite(BUTTON_UP, 0);
-	}
-	upAction_isActive = !upAction_isActive;
+	digitalWrite(BUTTON_UP, HIGH);
 }
 
 void MoveDown()
 {
-	if (downAction_isActive) {
-		analogWrite(BUTTON_DOWN, 255);
-	}
-	else
-	{
-		analogWrite(BUTTON_DOWN, 0);
-	}
-	downAction_isActive = !downAction_isActive;
+	digitalWrite(BUTTON_DOWN, HIGH);
 }
