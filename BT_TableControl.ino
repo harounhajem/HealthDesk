@@ -1,10 +1,9 @@
 #include "Communication.h"
-#define BUTTON_UP 5
-#define BUTTON_DOWN 6
+#define BUTTON_UP 6
+#define BUTTON_DOWN 5
 
 CommunicationClass communication;
 
-char msg;
 String recivedMessage;
 
 String COMMAND_UP = "UP";
@@ -22,8 +21,6 @@ void setup()
 
 void loop()
 {
-
-
 
 	// Recive message
 	recivedMessage = communication.ReadBytesUntil();
@@ -48,24 +45,26 @@ void loop()
 	}
 
 	// Execute Timer
+	// - blink and play sound
+	// - cancel timer if user pushes buttons breaks
 
 
-	recivedMessage = "";
+
 }
 
 void Reset() {
-	if (millis() - timer_ResetComndDelay > 80UL) {
-		digitalWrite(BUTTON_UP, LOW);
-		digitalWrite(BUTTON_DOWN, LOW);
+	if (millis() - timer_ResetComndDelay > 12UL) {
+		digitalWrite(BUTTON_UP, HIGH);
+		digitalWrite(BUTTON_DOWN, HIGH);
 	}
 }
 
 void MoveUp()
 {
-	digitalWrite(BUTTON_UP, HIGH);
+	digitalWrite(BUTTON_UP, LOW);
 }
 
 void MoveDown()
 {
-	digitalWrite(BUTTON_DOWN, HIGH);
+	digitalWrite(BUTTON_DOWN, LOW);
 }
